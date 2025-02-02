@@ -584,18 +584,18 @@ function exportOrderToCSV() {
     link.href = URL.createObjectURL(blob);
     link.download = "Bestellungen.csv";
     link.click();
+
+    alert("Bestellung wurde gespeichert!");
 }
 
-// Button zum Exportieren hinzufügen
+// Event-Listener für die Schaltfläche "Bestellung abschließen"
 document.addEventListener("DOMContentLoaded", () => {
-    let exportButton = document.createElement("button");
-    exportButton.textContent = "Bestellung exportieren (CSV)";
-    exportButton.onclick = exportOrderToCSV;
-    exportButton.style.marginTop = "20px";
-    exportButton.style.padding = "10px";
-    exportButton.style.fontSize = "16px";
-    
-    document.body.appendChild(exportButton);
+    let button = document.getElementById("bestellung-abschliessen");
+    if (button) {
+        button.addEventListener("click", exportOrderToCSV);
+    } else {
+        console.error("Schaltfläche 'Bestellung abschließen' nicht gefunden!");
+    }
 });
 
 
