@@ -555,8 +555,53 @@ function calculatePfandReturn() {
   document.getElementById("amountToPay").textContent = updatedAmountToPay.toFixed(2);
 }
 
-     
-function handlePayment() {
+
+// Funktion zum Exportieren der Bestellung als CSV-Datei
+function exportOrderToCSV() {
+    if (order.length === 0) {
+        alert("Keine Bestellung zum Exportieren!");
+        return;
+    }
+
+    // Erstelle das aktuelle Datum/Zeit-Format (YYYY-MM-DD HH:MM:SS)
+    const now = new Date();
+    const timestamp = now.toISOString().slice(0, 19).replace("T", " ");
+
+    // CSV-Kopfzeile
+    let csvContent = "Datum,Uhrzeit,Produkt,Menge,Preis,Pfand,Gesamtpreis,Gesamtpfand\n";
+
+    // Datenzeilen für jedes Produkt
+    order.forEach(product => {
+        let row = `${timestamp.split(" ")[0]},${timestamp.split(" ")[1]},${product.name},${product.quantity},${product.price.toFixed(2)},${product.pfand.toFixed(2)},${(product.price * product.quantity).toFixed(2)},${(product.pfand * product.quantity).toFixed(2)}`;
+        csvContent += row + "\n";
+    });
+
+    // Erstelle eine Blob-Datei für den Download
+    let blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    // Download-Link erstellen
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "Bestellungen.csv";
+    link.click();
+}
+
+// Button zum Exportieren hinzufügen
+document.addEventListener("DOMContentLoaded", () => {
+    let exportButton = document.createElement("button");
+    exportButton.textContent = "Bestellung exportieren (CSV)";
+    exportButton.onclick = exportOrderToCSV;
+    exportButton.style.marginTop = "20px";
+    exportButton.style.padding = "10px";
+    exportButton.style.fontSize = "16px";
+    
+    document.body.appendChild(exportButton);
+});
+
+
+   
+
+   function handlePayment() {
   const amountToPay = parseFloat(document.getElementById("amountToPay").textContent);
   const paymentDialog = document.createElement("div");
   paymentDialog.style = `
