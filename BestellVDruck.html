@@ -6,7 +6,7 @@
   <title>JBO feiert mit Freunden</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
  
-   
+  
     
     <style>
     body {
@@ -274,7 +274,7 @@
 
 
 <div class="header">
-<img src="logo.png" alt="Logo">
+  <img src="/Users/wundi-imac2/Desktop/Logo.PNG" alt="Logo">
   <h1>45 Jahre Jugendblasorchester Kürnach</h1>
   <p class="untertitel">🎉 Schön, dass Du da bist und mit uns feierst 🎊! </p>
   <p class="info-text">🍺 Bitte nimm Deinen Ausdruck mit zur jeweiligen Ausgabetheke 🍔! </p>
@@ -555,13 +555,75 @@ function calculatePfandReturn() {
   document.getElementById("amountToPay").textContent = updatedAmountToPay.toFixed(2);
 }
 
-    function handlePayment() {
-      let amountToPay = parseFloat(document.getElementById("amountToPay").textContent);
-      let paymentAmount = parseFloat(prompt("Zahlungsbetrag eingeben"));
-      let changeAmount = paymentAmount - amountToPay;
+     
+function handlePayment() {
+  const amountToPay = parseFloat(document.getElementById("amountToPay").textContent);
+  const paymentDialog = document.createElement("div");
+  paymentDialog.style = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    z-index: 1000;
+  `;
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.inputMode = "numeric";
+  input.style = "width: 200px; margin-bottom: 10px; font-size: 20px;";
+
+  const keypad = document.createElement("div");
+  keypad.style = "display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;";
+  
+  for (let i = 1; i <= 9; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.onclick = () => input.value += i;
+    keypad.appendChild(btn);
+  }
+
+  const specialKeys = document.createElement("div");
+  specialKeys.style = "margin-top: 10px; display: flex; gap: 5px;";
+  
+  const clearBtn = document.createElement("button");
+  clearBtn.textContent = "C";
+  clearBtn.onclick = () => input.value = "";
+  
+  const zeroBtn = document.createElement("button");
+  zeroBtn.textContent = "0";
+  zeroBtn.onclick = () => input.value += "0";
+  
+  const confirmBtn = document.createElement("button");
+  confirmBtn.textContent = "✔";
+  confirmBtn.onclick = () => {
+    const paymentAmount = parseFloat(input.value);
+    if (paymentAmount >= amountToPay) {
+      const change = paymentAmount - amountToPay;
       document.getElementById("paymentAmount").textContent = paymentAmount.toFixed(2);
-      document.getElementById("changeAmount").textContent = changeAmount.toFixed(2);
+      document.getElementById("changeAmount").textContent = change.toFixed(2);
+      document.body.removeChild(paymentDialog);
+    } else {
+      alert(`Mindestbetrag: ${amountToPay.toFixed(2)} €`);
     }
+  };
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Abbrechen";
+  cancelBtn.onclick = () => {
+    document.body.removeChild(paymentDialog);
+  };
+  cancelBtn.style = "margin-top: 10px; width: 100%;";
+
+  specialKeys.append(clearBtn, zeroBtn, confirmBtn);
+  paymentDialog.append(input, keypad, specialKeys, cancelBtn);
+  document.body.appendChild(paymentDialog);
+}
+
+     
+     
 
     function printReceipt() {
       window.print();
